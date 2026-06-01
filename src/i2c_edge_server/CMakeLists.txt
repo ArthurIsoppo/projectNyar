@@ -16,7 +16,7 @@ set(dependencies
 )
 
 # Compile the generic i2c server node
-add_executable(i2c_server src/generic_i2c_server.cpp)
+add_executable(i2c_server src/i2c_server.cpp)
 ament_target_dependencies(i2c_server ${dependencies})
 
 # Install rules so ROS 2 can find the executable
