@@ -16,7 +16,7 @@ public:
         // Create the service server
         srv_ = this->create_service<sensor_interfaces::srv::I2cCommand>(
             "/sensor/i2c_command", 
-            std::bind(&GenericI2cServer::i2c_callback, this, _1, _2)
+            std::bind(&I2cServer::i2c_callback, this, _1, _2)
         );
 
         // Open the I2C bus 1
