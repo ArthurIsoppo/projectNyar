@@ -1,4 +1,8 @@
-uint8 address
-uint8[] data
+uint8 device_addr
+uint8 reg_addr
+bool is_read
+uint8 length
+uint8[] write_data
 ---
+uint8[] read_data
 bool success
