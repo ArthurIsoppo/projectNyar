@@ -53,6 +53,7 @@ private:
             request->is_read = true;
             request->reg_addr = 0x06;
             request->length = 3;
+            request->write_data = {0x00}; //ghost byte para parar o spam do buffer
 
             client_->async_send_request(request, std::bind(&VectorLogicClient::response_callback, this, _1));
         }
