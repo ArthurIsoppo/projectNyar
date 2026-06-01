@@ -63,9 +63,9 @@ private:
         if (!response->success || response->read_data.size() < 3) return;
 
         // Extract raw bytes returned by the Raspberry Pi
-        int x_raw = response->read_data;
-        int y_raw = response->read_data[3];
-        int z_raw = response->read_data[4];
+        int x_raw = response->read_data[0];
+        int y_raw = response->read_data[1];
+        int z_raw = response->read_data[2];
 
         // Process two's complement mathematically on the Workstation
         if (x_raw > 127) x_raw -= 256;
