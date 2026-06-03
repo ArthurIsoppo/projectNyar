@@ -94,7 +94,7 @@ private:
 
     // --- CÉREBRO: Lógica Física e Conversões Isoladas ---
     void process_and_publish(const std::vector<uint8_t>& data) {
-        int x_raw = data;
+        int x_raw = data[0];
         int y_raw = data[1];
         int z_raw = data[2];
 
