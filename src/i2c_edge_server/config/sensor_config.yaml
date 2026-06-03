@@ -1,0 +1,6 @@
+/i2c_edge_server:
+  ros__parameters:
+    device_addr: 0x1D      # Endereço I2C do acelerômetro MMA7455
+    reg_start_addr: 0x06   # Registrador inicial do Eixo X (XOUT8)
+    read_length: 3         # Quantidade de bytes contínuos a ler (X, Y, Z)
+    pub_rate_hz: 20.0      # Frequência com que o Timer da Pi vai ler o barramento
