@@ -5,21 +5,18 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_interfaces REQUIRED)
 
-set(dependencies 
-  rclcpp 
+set(dependencies
+  rclcpp
   sensor_interfaces
 )
 
-# Compile the generic i2c server node
 add_executable(i2c_server src/i2c_server.cpp)
 ament_target_dependencies(i2c_server ${dependencies})
 
-# Install rules so ROS 2 can find the executable
 install(TARGETS
   i2c_server
   ARCHIVE DESTINATION lib

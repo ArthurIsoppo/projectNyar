@@ -5,23 +5,20 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# Find dependencies [9]
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
-set(dependencies 
-  rclcpp 
+set(dependencies
+  rclcpp
   sensor_interfaces
   geometry_msgs
 )
 
-# Compile the node [9]
 add_executable(vector_logic_client src/vector_logic_client.cpp)
 ament_target_dependencies(vector_logic_client ${dependencies})
 
-# Install rules to make the executable accessible to ROS 2 [10]
 install(TARGETS
   vector_logic_client
   ARCHIVE DESTINATION lib
@@ -29,8 +26,8 @@ install(TARGETS
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY 
-  launch 
+install(DIRECTORY
+  launch
   DESTINATION share/${PROJECT_NAME}
 )
 
