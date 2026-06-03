@@ -109,6 +109,8 @@ private:
         vector_msg.y = y_raw / 64.0;
         vector_msg.z = z_raw / 64.0;
 
+        RCLCPP_INFO(this->get_logger(), "Física Real [g] -> X: %.2f | Y: %.2f | Z: %.2f", vector_msg.x, vector_msg.y, vector_msg.z);
+
         // Finalmente, publica no Tópico do sistema para a Navegação usar
         pub_->publish(vector_msg);
     }

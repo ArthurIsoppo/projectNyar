@@ -61,12 +61,16 @@ private:
         }
 
         // PASSO 2: LEITURA (Extração de Dados)
+// PASSO 2: LEITURA (Extração de Dados)
         if (request->length > 0) {
             response->read_data.resize(request->length);
             if (read(i2c_fd_, response->read_data.data(), request->length) != request->length) {
                 RCLCPP_ERROR(this->get_logger(), "Erro elétrico na Leitura I2C.");
                 response->success = false;
             }
+        } else {
+            // FIX DO CYCLONEDDS: Nunca devolver um array de tamanho ZERO na rede
+            response->read_data = {0x00}; 
         }
         
         // O ROS 2 bloqueia outros nós enquanto isso roda, garantindo que ninguém 
