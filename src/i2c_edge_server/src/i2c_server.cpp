@@ -15,10 +15,10 @@ public:
     I2cEdgeServer() : Node("i2c_edge_server") {
         i2c_fd_ = open("/dev/i2c-1", O_RDWR);
         if (i2c_fd_ < 0) {
-            RCLCPP_ERROR(this->get_logger(), "Falha ao abrir /dev/i2c-1");
+            RCLCPP_ERROR(this->get_logger(), "failed to open");
             return;
         }
-        RCLCPP_INFO(this->get_logger(), "Barramento I2C aberto.");
+        RCLCPP_INFO(this->get_logger(), "I2C open");
 
         srv_ = this->create_service<sensor_interfaces::srv::I2cCommand>(
             "/sensor/i2c_command",
@@ -39,7 +39,7 @@ private:
         std::shared_ptr<sensor_interfaces::srv::I2cCommand::Response> response)
     {
         if (ioctl(i2c_fd_, I2C_SLAVE, request->device_addr) < 0) {
-            RCLCPP_ERROR(this->get_logger(), "Falha ao acessar endereço 0x%X", request->device_addr);
+            RCLCPP_ERROR(this->get_logger(), "failed to access addr 0x%X", request->device_addr);
             response->success = false;
             return;
         }
@@ -49,7 +49,7 @@ private:
         if (!request->write_data.empty()) {
             if (write(i2c_fd_, request->write_data.data(), request->write_data.size())
                     != (ssize_t)request->write_data.size()) {
-                RCLCPP_ERROR(this->get_logger(), "Erro na escrita I2C.");
+                RCLCPP_ERROR(this->get_logger(), "error on I2C write");
                 response->success = false;
                 return;
             }
@@ -58,11 +58,11 @@ private:
         if (request->length > 0) {
             response->read_data.resize(request->length);
             if (read(i2c_fd_, response->read_data.data(), request->length) != request->length) {
-                RCLCPP_ERROR(this->get_logger(), "Erro na leitura I2C.");
+                RCLCPP_ERROR(this->get_logger(), "error on I2C read");
                 response->success = false;
             }
         } else {
-            // CycloneDDS rejeita arrays de tamanho zero na resposta
+            // to stop buffer spam
             response->read_data = {0x00};
         }
     }
