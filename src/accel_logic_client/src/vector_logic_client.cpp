@@ -75,6 +75,7 @@ private:
                         if (response->success && response->read_data.size() == 3) {
                             error_counter_ = 0;
                             process_and_publish(response->read_data);
+                            RCLCPP_INFO(this->get_logger(), "[MARK] Timestamp - Data recived from Rasp");
                         } else {
                             if (++error_counter_ >= 10) {
                                 RCLCPP_ERROR(this->get_logger(),

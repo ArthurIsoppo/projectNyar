@@ -60,6 +60,8 @@ private:
             if (read(i2c_fd_, response->read_data.data(), request->length) != request->length) {
                 RCLCPP_ERROR(this->get_logger(), "error on I2C read");
                 response->success = false;
+            } else {
+                RCLCPP_INFO(this->get_logger(), "[MARK] Timestamp - Data going to the workstation");
             }
         } else {
             // to stop buffer spam
