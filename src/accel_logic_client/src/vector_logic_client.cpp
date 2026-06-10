@@ -5,6 +5,13 @@
 #include "std_msgs/msg/u_int8_multi_array.hpp"
 #include "geometry_msgs/msg/vector3.hpp"
 
+//For statistics
+#include <numeric>
+#include <cmath>
+#include <algorithm>
+#include <vector>
+// ---
+
 using namespace std::chrono_literals;
 using std::placeholders::_1;
 
@@ -28,6 +35,11 @@ private:
     STATE current_state_;
     int  error_counter_       = 0;
     bool waiting_for_response_ = false;
+
+    // statistics
+    double request_time_ = 0.0;
+    std::vector<double> latencies_;
+    // ---
 
     rclcpp::Publisher<geometry_msgs::msg::Vector3>::SharedPtr pub_;
     rclcpp::Client<sensor_interfaces::srv::I2cCommand>::SharedPtr client_;
@@ -67,10 +79,45 @@ private:
                 request->write_data = {0x06};
                 request->length = 3;
 
+                // statistics
+                request_time_ = this->now().seconds();
+                // ---
+
                 waiting_for_response_ = true;
                 client_->async_send_request(request,
                     [this](rclcpp::Client<sensor_interfaces::srv::I2cCommand>::SharedFuture future) {
                         waiting_for_response_ = false;
+
+                        // statistics
+                        double arrival_time = this->now().seconds();
+                        double rtt = arrival_time - request_time_;
+                        double latencia_ida_ms = (rtt / 2.0) * 1000.0;
+
+                        latencies_.push_back(latencia_ida_ms);
+
+                        double soma = std::accumulate(latencies_.begin(), latencies_.end(), 0.0);
+                        double media = soma / latencies_.size();
+
+                        double soma_diff_quadrado = 0.0;
+                        for (double lat : latencies_) {
+                            soma_diff_quadrado += (lat - media) * (lat - media);
+                        }
+                        double desvio = std::sqrt(soma_diff_quadrado / latencies_.size());
+
+                        double p99 = 0.0;
+                        if (!latencies_.empty()) {
+                            std::vector<double> lat_ordenadas = latencies_;
+                            std::sort(lat_ordenadas.begin(), lat_ordenadas.end());
+                            size_t index = std::floor(0.99 * lat_ordenadas.size());
+                            if(index >= lat_ordenadas.size()) index = lat_ordenadas.size() - 1;
+                            p99 = lat_ordenadas[index];
+                        }
+
+                        RCLCPP_INFO(this->get_logger(),
+                            "Lat: %.2f ms | Média: %.2f ms | Desvio (Jitter): %.2f ms | Cauda (P99): %.2f ms",
+                            latencia_ida_ms, media, desvio, p99);
+                        // --------------------------------------
+
                         auto response = future.get();
                         if (response->success && response->read_data.size() == 3) {
                             error_counter_ = 0;
